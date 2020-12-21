@@ -3,14 +3,14 @@ import sys
 arguments = sys.argv
 
 def data_input():
-    type = ''
+    loan_type = ''
     principal = 0
     payment = 0
     periods = 0
     interest = 0
-    for element in arguments:
+    for element in arguments:  # retrieves different parameters from the command line
         if '--type=' in element:
-            type += element.replace('--type=', '')
+            loan_type += element.replace('--type=', '')
         elif '--principal=' in element:
             principal += int(element.replace('--principal=', ''))
         elif '--payment=' in element:
@@ -19,7 +19,7 @@ def data_input():
             periods += int(element.replace('--periods=', ''))
         elif '--interest=' in element:
             interest += float(element.replace('--interest=', ''))
-    if len(arguments) >= 5 and (type == 'annuity' or type == 'diff'):
+    if len(arguments) >= 5 and (type == 'annuity' or type == 'diff'):  # checks parameters' correctness, enters the right module
         if principal == 0 and type == 'annuity' and payment > 0 and periods > 0 and interest > 0:
             calculate_loan_principal(payment, periods, interest)
         elif payment == 0 and principal > 0 and periods > 0 and interest > 0:
@@ -31,7 +31,7 @@ def data_input():
     else:
         print('Incorrect parameters')
 
-def calculate_payments_number(principal, payment, interest):
+def calculate_payments_number(principal, payment, interest):  # calculates number of payments
     nominal_interest = interest / (12 * 100)
     periods = math.ceil(math.log(payment / (payment - (nominal_interest * principal)), 1 + nominal_interest))
     if periods < 12:
@@ -47,13 +47,13 @@ def calculate_payments_number(principal, payment, interest):
             print(f'It will take {periods // 12} years and {periods % 12}to repay the loan')
     print(f'Overpayment = {int(payment * periods - principal)}')
 
-def calculate_monthly_payment(type, principal, periods, interest):
+def calculate_monthly_payment(loan_type, principal, periods, interest):  # calculates monthly payment
     nominal_interest = interest / (12 * 100)
-    if type == 'annuity':
+    if loan_type == 'annuity':  # monthly annuity payment
         annuity_payment = math.ceil(principal * (nominal_interest * math.pow(1 + nominal_interest, periods)) / ((pow(1 + nominal_interest, periods)) - 1))
         print(f'Your monthly payment = {annuity_payment}!')
         print(f'Overpayment = {annuity_payment * periods - principal}')
-    elif type == 'diff':
+    elif loan_type == 'diff':  # monthly differentiate payment
         diff_payment_sum = 0.0
         for i in range(1, periods + 1):
             diff_payment = (principal / periods) + (nominal_interest * (principal - ((principal * (i - 1)) / periods)))
@@ -61,7 +61,7 @@ def calculate_monthly_payment(type, principal, periods, interest):
             diff_payment_sum += math.ceil(diff_payment)
         print(f'\nOverpayment = {int(diff_payment_sum - principal)}')
 
-def calculate_loan_principal(payment, periods, interest):
+def calculate_loan_principal(payment, periods, interest):  # calculates loan principal
     nominal_interest = interest / (12 * 100)
     principal = payment / ((nominal_interest * math.pow(1 + nominal_interest, periods)) / ((pow(1 + nominal_interest, periods)) - 1))
     print(f'Your loan principal = {int(principal)}!')
